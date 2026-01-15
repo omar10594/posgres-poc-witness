@@ -1,0 +1,68 @@
+services:
+  # ============================================================================
+  # Monitoring PostgreSQL Instances
+  # ============================================================================
+  pg-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pg-monitor
+    hostname: pg-monitor
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/monitor
+    volumes:
+      - /mnt/user/appdata/pg_monitor_data:/var/lib/postgresql
+    networks:
+      - sosimple-network
+    healthcheck:
+      test: ["CMD", "pg_autoctl", "show", "state", "--pgdata", "/var/lib/postgresql/monitor"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  # ============================================================================
+  # Tailscale Service for Secure Networking
+  # ============================================================================
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: pg-monitor-tailscale
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - /lib/modules:/lib/modules:ro
+      - /mnt/user/appdata/pg_monitor_tailscale_state:/var/lib/tailscale
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_HOSTNAME=pg-monitor
+      - TS_AUTH_ONCE=true
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_EXTRA_ARGS=--accept-dns=true --advertise-exit-node=false
+    network_mode: "service:pg-monitor"
+    depends_on:
+      pg-monitor:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "tailscale status --json | grep -q '\"Self\":' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  pg_monitor_data:
+    driver: local
+  pg_monitor_tailscale_state:
+    driver: local
+
+networks:
+  sosimple-network:
+    external: true
