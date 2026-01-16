@@ -4,7 +4,7 @@ FROM postgres:18
 # Install pg_auto_failover from official repository
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        postgresql-16-auto-failover \
+        postgresql-18-auto-failover \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
