@@ -8,6 +8,9 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy PostgreSQL configuration for Tailscale SSL access
+COPY config/pg_hba_tailscale.conf /etc/postgresql/pg_hba_tailscale.conf
+
 # Copy startup script
 COPY scripts/start-monitor.sh /usr/local/bin/start-monitor.sh
 RUN chmod +x /usr/local/bin/start-monitor.sh
