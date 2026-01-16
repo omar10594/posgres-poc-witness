@@ -1,5 +1,5 @@
 # TODO: update to a alpine-based
-FROM postgres:16
+FROM postgres:18
 
 # Install pg_auto_failover from official repository
 RUN apt-get update \
