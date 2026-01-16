@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/monitor
     volumes:
-      - /mnt/user/appdata/pg_monitor_data:/var/lib/postgresql
+      - pg_monitor_data:/var/lib/postgresql
     networks:
       - sosimple-network
     healthcheck:
@@ -38,7 +38,7 @@ services:
       - /dev/net/tun:/dev/net/tun
     volumes:
       - /lib/modules:/lib/modules:ro
-      - /mnt/user/appdata/pg_monitor_tailscale_state:/var/lib/tailscale
+      - pg_monitor_tailscale_state:/var/lib/tailscale
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_HOSTNAME=pg-monitor

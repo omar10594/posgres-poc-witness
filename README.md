@@ -21,12 +21,6 @@ Real-time monitor for PostgreSQL using pg_auto_failover.
    docker network create sosimple-network
    ```
 
-3. Create the data directory:
-   ```bash
-   mkdir -p /mnt/user/appdata/pg_monitor_data
-   mkdir -p /mnt/user/appdata/pg_monitor_tailscale_state
-   ```
-
 ## Quick Start
 
 Run the following command:
