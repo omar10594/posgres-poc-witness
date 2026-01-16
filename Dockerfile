@@ -10,6 +10,7 @@ RUN apt-get update \
 
 # Copy startup script
 COPY scripts/start-monitor.sh /usr/local/bin/start-monitor.sh
+RUN chmod +x /usr/local/bin/start-monitor.sh
 
 # Switch to postgres user for runtime
 USER postgres
